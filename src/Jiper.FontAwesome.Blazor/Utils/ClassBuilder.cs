@@ -6,7 +6,7 @@ namespace Jiper.FontAwesome.Blazor.Utils;
 internal static class ClassBuilder
 {
     // Fluent builder factory
-    public static Builder Create() => new Builder();
+    public static Builder Create() => new();
 
     // Fluent builder implementation
     public sealed class Builder
@@ -25,7 +25,6 @@ internal static class ClassBuilder
 
         public Builder Add(params string?[] parts)
         {
-            if (parts is null) return this;
             foreach (var part in parts)
             {
                 Add(part);
@@ -150,9 +149,9 @@ internal static class ClassBuilder
 
         // Convert to kebab case and prefix with fa-
         var sb = new StringBuilder();
-        for (int i = 0; i < trimmed.Length; i++)
+        for (var i = 0; i < trimmed.Length; i++)
         {
-            char c = trimmed[i];
+            var c = trimmed[i];
             if (char.IsWhiteSpace(c) || c == '_' || c == '.')
             {
                 sb.Append('-');
