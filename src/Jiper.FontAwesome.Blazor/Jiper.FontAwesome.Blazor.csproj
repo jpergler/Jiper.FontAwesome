@@ -9,10 +9,10 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Jiper.FontAwesome.Blazor</PackageId>
     <Version>0.1.0</Version>
-    <Authors>FontAwesome.Blazor</Authors>
+    <Authors>Jindřich Pergler</Authors>
     <Description>Blazor components for Font Awesome with strongly-typed parameters.</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://example.com/FontAwesome.Blazor</RepositoryUrl>
+    <RepositoryUrl>https://github.com/jpergler/Jiper.FontAwesome</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
