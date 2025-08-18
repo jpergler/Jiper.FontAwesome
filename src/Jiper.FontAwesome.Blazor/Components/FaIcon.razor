@@ -46,30 +46,22 @@
 
     protected override void OnParametersSet()
     {
-        var iconClass = ClassBuilder.NormalizeIconName(Icon);
-        var iconStyle = ClassBuilder.StyleToClass(IconStyle);
-        var sizeClass = ClassBuilder.SizeToClass(Size);
-        var animClass = ClassBuilder.AnimationToClass(Animation);
-        var rotClass = ClassBuilder.RotationToClass(Rotation);
-        var flipClass = ClassBuilder.FlipToClass(Flip);
-        var pullClass = ClassBuilder.PullToClass(Pull);
-        var stackClass = ClassBuilder.StackLayerToClass(StackLayer);
-
-        CssClass = ClassBuilder.Build(
-            iconStyle,
-            iconClass,
-            sizeClass,
-            animClass,
-            rotClass,
-            flipClass,
-            pullClass,
-            stackClass,
-            FixedWidth ? "fa-fw" : null,
-            Border ? "fa-border" : null,
-            Inverse ? "fa-inverse" : null,
-            ListItem ? "fa-li" : null,
-            SwapOpacity ? "fa-swap-opacity" : null,
-            Class
-        );
+        CssClass = ClassBuilder
+            .Create()
+            .Add(ClassBuilder.StyleToClass(IconStyle))
+            .Add(ClassBuilder.NormalizeIconName(Icon))
+            .Add(ClassBuilder.SizeToClass(Size))
+            .Add(ClassBuilder.AnimationToClass(Animation))
+            .Add(ClassBuilder.RotationToClass(Rotation))
+            .Add(ClassBuilder.FlipToClass(Flip))
+            .Add(ClassBuilder.PullToClass(Pull))
+            .Add(ClassBuilder.StackLayerToClass(StackLayer))
+            .AddIf(FixedWidth, "fa-fw")
+            .AddIf(Border, "fa-border")
+            .AddIf(Inverse, "fa-inverse")
+            .AddIf(ListItem, "fa-li")
+            .AddIf(SwapOpacity, "fa-swap-opacity")
+            .Add(Class)
+            .Build();
     }
 }

@@ -5,6 +5,48 @@ namespace Jiper.FontAwesome.Blazor.Utils;
 
 internal static class ClassBuilder
 {
+    // Fluent builder factory
+    public static Builder Create() => new Builder();
+
+    // Fluent builder implementation
+    public sealed class Builder
+    {
+        private readonly StringBuilder sb = new();
+
+        public Builder Add(string? part)
+        {
+            if (!string.IsNullOrWhiteSpace(part))
+            {
+                if (sb.Length > 0) sb.Append(' ');
+                sb.Append(part);
+            }
+            return this;
+        }
+
+        public Builder Add(params string?[] parts)
+        {
+            if (parts is null) return this;
+            foreach (var part in parts)
+            {
+                Add(part);
+            }
+            return this;
+        }
+
+        public Builder AddIf(bool condition, string? part)
+        {
+            if (condition)
+            {
+                Add(part);
+            }
+            return this;
+        }
+
+        public string Build() => sb.ToString();
+
+        public override string ToString() => sb.ToString();
+    }
+
     public static string Build(params string?[] parts)
     {
         var sb = new StringBuilder();
