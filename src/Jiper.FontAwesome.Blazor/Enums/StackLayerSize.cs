@@ -4,5 +4,5 @@ public enum StackLayerSize
 {
     None,
     OneX, // fa-stack-1x
-    TwoX  // fa-stack-2x
+    TwoX // fa-stack-2x
 }

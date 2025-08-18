@@ -20,6 +20,7 @@ internal static class ClassBuilder
                 if (sb.Length > 0) sb.Append(' ');
                 sb.Append(part);
             }
+
             return this;
         }
 
@@ -29,6 +30,7 @@ internal static class ClassBuilder
             {
                 Add(part);
             }
+
             return this;
         }
 
@@ -38,6 +40,7 @@ internal static class ClassBuilder
             {
                 Add(part);
             }
+
             return this;
         }
 
@@ -57,6 +60,7 @@ internal static class ClassBuilder
                 sb.Append(part);
             }
         }
+
         return sb.ToString();
     }
 

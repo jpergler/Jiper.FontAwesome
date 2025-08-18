@@ -1,21 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RazorLangVersion>8.0</RazorLangVersion>
-    <DisableImplicitStaticWebAssets>true</DisableImplicitStaticWebAssets>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <RazorLangVersion>8.0</RazorLangVersion>
+        <DisableImplicitStaticWebAssets>true</DisableImplicitStaticWebAssets>
 
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <PackageId>Jiper.FontAwesome.Blazor</PackageId>
-    <Version>0.1.0</Version>
-    <Authors>Jindřich Pergler</Authors>
-    <Description>Blazor components for Font Awesome with strongly-typed parameters.</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/jpergler/Jiper.FontAwesome</RepositoryUrl>
-  </PropertyGroup>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Jiper.FontAwesome.Blazor</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>Jindřich Pergler</Authors>
+        <Description>Blazor components for Font Awesome with strongly-typed parameters.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/jpergler/Jiper.FontAwesome</RepositoryUrl>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <FrameworkReference Include="Microsoft.AspNetCore.App" />
-  </ItemGroup>
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
 </Project>
