@@ -2,15 +2,15 @@
 @using Jiper.FontAwesome.Blazor.Components
 @using Jiper.FontAwesome.Blazor.Enums
 
-<PageTitle>Home</PageTitle>
+<PageTitle>FaIcon component samples</PageTitle>
 
-<FaIcon Icon="@FaIconsFree.User" Rotation="IconRotation.Rotate180"/>
+<h1>FaIcon component samples</h1>
+
+<FaIcon Icon="@FaIconsFree.User"/>
+<FaIcon Icon="@FaIconsFree.HomeAlt"/>
+<FaIcon Icon="@FaIconsFree.UserCircle" Rotation="IconRotation.Rotate180"/>
 
 <FaStack>
     <FaIcon Icon="@FaIconsFree.LocationPin" StackLayer="StackLayerSize.TwoX" Style="color: forestgreen"/>
-    <FaIcon Icon="@FaIconsFree.UserCircle" StackLayer="StackLayerSize.OneX" Style="color: yellow" />   
+    <FaIcon Icon="@FaIconsFree.UserCircle" StackLayer="StackLayerSize.OneX" Style="color: yellow"/>
 </FaStack>
-
-<h1>Hello, world!</h1>
-
-Welcome to your new app.
