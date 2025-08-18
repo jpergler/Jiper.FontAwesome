@@ -1,15 +1,15 @@
 ﻿@page "/"
-@using Jiper.FontAwesome.Blazor
 @using Jiper.FontAwesome.Blazor.Components
 @using Jiper.FontAwesome.Blazor.Enums
+@using Jiper.FontAwesome.Blazor.Icons
 
 <PageTitle>Home</PageTitle>
 
-<FaIcon Icon="User" Rotation="IconRotation.Rotate180"/>
+<FaIcon Icon="@FaIconsFree.User" Rotation="IconRotation.Rotate180"/>
 
 <FaStack>
-    <FaIcon Icon="LocationPin" StackLayer="StackLayerSize.TwoX" Style="color: forestgreen"/>
-    <FaIcon Icon="UserCircle" StackLayer="StackLayerSize.OneX" Style="color: yellow" />   
+    <FaIcon Icon="@FaIconsFree.LocationPin" StackLayer="StackLayerSize.TwoX" Style="color: forestgreen"/>
+    <FaIcon Icon="@FaIconsFree.UserCircle" StackLayer="StackLayerSize.OneX" Style="color: yellow" />   
 </FaStack>
 
 <h1>Hello, world!</h1>

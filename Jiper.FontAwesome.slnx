@@ -1,4 +1,5 @@
 ﻿<Solution>
   <Project Path="src\Jiper.FontAwesome.Blazor\Jiper.FontAwesome.Blazor.csproj" Type="Classic C#" />
+  <Project Path="src\Jiper.FontAwesome.IconExtractor\Jiper.FontAwesome.IconExtractor.csproj" Type="Classic C#" />
   <Project Path="src\Jiper.FontAwesome.Sample\Jiper.FontAwesome.Sample.csproj" Type="Classic C#" />
 </Solution>
