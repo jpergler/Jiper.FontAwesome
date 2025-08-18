@@ -10,7 +10,7 @@ internal static class Program
     private const string DefaultNamespace = "Jiper.FontAwesome.Blazor.Components";
     private const string DefaultClassName = "FaIconsFree";
     private const string DefaultFileName = DefaultClassName + ".cs";
-    private static string DefaultOutputPath = Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Components", DefaultFileName);
+    private static readonly string DefaultOutputPath = Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Components", DefaultFileName);
 
     private static int Main(string[] args)
     {
