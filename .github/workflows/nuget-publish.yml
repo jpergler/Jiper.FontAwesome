@@ -38,7 +38,7 @@ jobs:
           echo "version=$RAW" >> "$GITHUB_OUTPUT"
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore ./src/Jiper.FontAwesome.Blazor/Jiper.FontAwesome.Blazor.csproj
 
       - name: Pack
         run: |
