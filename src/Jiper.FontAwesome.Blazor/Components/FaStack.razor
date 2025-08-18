@@ -1,0 +1,21 @@
+@using Jiper.FontAwesome.Blazor.Enums
+@using Jiper.FontAwesome.Blazor.Utils
+@using Microsoft.AspNetCore.Components
+
+<span class="@CssClass" @attributes="AdditionalAttributes">
+    @ChildContent
+</span>
+
+@code
+{
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    // Optional overall size applied to the stack (e.g., fa-2x)
+    [Parameter] public IconSize Size { get; set; } = IconSize.None;
+
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass => ClassBuilder.Build("fa-stack", ClassBuilder.SizeToClass(Size), Class);
+}

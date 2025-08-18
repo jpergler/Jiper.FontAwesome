@@ -1,0 +1,14 @@
+{
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.0.0"
+  },
+  "devDependencies": {
+    "cpy-cli": "^6.0.0"
+  },
+  "scripts": {
+    "copy:fa:clean": "node -e \"require('fs').rmSync('wwwroot/lib/fontawesome', { recursive: true, force: true });\"",
+    "copy:fa:files": "cpy \"node_modules/@fortawesome/fontawesome-free/webfonts/*\" \"wwwroot/lib/fontawesome/webfonts\" && cpy \"node_modules/@fortawesome/fontawesome-free/css/*.css\" \"wwwroot/lib/fontawesome/css\"",
+    "copy:fa": "npm run copy:fa:clean && npm run copy:fa:files",
+    "init": "npm run copy:fa"
+  }
+}

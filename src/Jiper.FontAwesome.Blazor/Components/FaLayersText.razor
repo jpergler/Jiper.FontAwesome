@@ -1,0 +1,22 @@
+@using Jiper.FontAwesome.Blazor.Enums
+@using Jiper.FontAwesome.Blazor.Utils
+@using Microsoft.AspNetCore.Components
+
+<span class="@CssClass" style="@Style" @attributes="AdditionalAttributes">
+    @Text
+</span>
+
+@code
+{
+    [Parameter] public string Text { get; set; } = string.Empty;
+    [Parameter] public IconSize Size { get; set; } = IconSize.None;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass => ClassBuilder.Build(
+        "fa-layers-text",
+        ClassBuilder.SizeToClass(Size),
+        Class
+    );
+}

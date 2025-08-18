@@ -1,0 +1,76 @@
+@using Jiper.FontAwesome.Blazor.Enums
+@using Jiper.FontAwesome.Blazor.Utils
+@using Microsoft.AspNetCore.Components
+
+<i @attributes="AdditionalAttributes"
+   id="@Id"
+   class="@CssClass"
+   style="@Style"
+   title="@Title"
+   role="@Role"
+   aria-label="@AriaLabel"
+   tabindex="@TabIndexValue">
+</i>
+
+@code
+{
+    [Parameter] public string Icon { get; set; } = string.Empty;
+    [Parameter] public IconStyle IconStyle { get; set; } = IconStyle.Solid;
+
+    [Parameter] public IconSize Size { get; set; } = IconSize.None;
+    [Parameter] public IconAnimation Animation { get; set; } = IconAnimation.None;
+    [Parameter] public IconRotation Rotation { get; set; } = IconRotation.None;
+    [Parameter] public IconFlip Flip { get; set; } = IconFlip.None;
+    [Parameter] public IconPull Pull { get; set; } = IconPull.None;
+
+    [Parameter] public bool FixedWidth { get; set; }
+    [Parameter] public bool Border { get; set; }
+    [Parameter] public bool Inverse { get; set; }
+    [Parameter] public bool ListItem { get; set; }
+    [Parameter] public bool SwapOpacity { get; set; }
+
+    // Stack layer utility when used inside <FaStack>
+    [Parameter] public StackLayerSize StackLayer { get; set; } = StackLayerSize.None;
+
+    // Common HTML attributes
+    [Parameter] public string? Id { get; set; }
+    [Parameter] public string? Title { get; set; }
+    [Parameter] public string? Role { get; set; }
+    [Parameter] public string? AriaLabel { get; set; }
+    [Parameter] public int? TabIndex { get; set; }
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string CssClass { get; set; } = string.Empty;
+    private string? TabIndexValue => TabIndex.HasValue ? TabIndex.Value.ToString() : null;
+
+    protected override void OnParametersSet()
+    {
+        var iconClass = ClassBuilder.NormalizeIconName(Icon);
+        var iconStyle = ClassBuilder.StyleToClass(IconStyle);
+        var sizeClass = ClassBuilder.SizeToClass(Size);
+        var animClass = ClassBuilder.AnimationToClass(Animation);
+        var rotClass = ClassBuilder.RotationToClass(Rotation);
+        var flipClass = ClassBuilder.FlipToClass(Flip);
+        var pullClass = ClassBuilder.PullToClass(Pull);
+        var stackClass = ClassBuilder.StackLayerToClass(StackLayer);
+
+        CssClass = ClassBuilder.Build(
+            iconStyle,
+            iconClass,
+            sizeClass,
+            animClass,
+            rotClass,
+            flipClass,
+            pullClass,
+            stackClass,
+            FixedWidth ? "fa-fw" : null,
+            Border ? "fa-border" : null,
+            Inverse ? "fa-inverse" : null,
+            ListItem ? "fa-li" : null,
+            SwapOpacity ? "fa-swap-opacity" : null,
+            Class
+        );
+    }
+}
