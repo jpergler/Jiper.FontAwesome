@@ -7,21 +7,26 @@ namespace Jiper.FontAwesome.IconExtractor;
 
 internal static class Program
 {
+    private const string DefaultNamespace = "Jiper.FontAwesome.Blazor.Components";
+    private const string DefaultClassName = "FaIconsFree";
+    private const string DefaultFileName = DefaultClassName + ".cs";
+    private static string DefaultOutputPath = Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Components", DefaultFileName);
+
     private static int Main(string[] args)
     {
         try
         {
             var outputPath = args.Length > 0 && !string.IsNullOrWhiteSpace(args[0])
                 ? Path.GetFullPath(args[0])
-                : Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Components", "FaIconsFree.cs");
+                : DefaultOutputPath;
 
             var targetNamespace = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1])
                 ? args[1]
-                : "Jiper.FontAwesome.Blazor.Components";
+                : DefaultNamespace;
 
             var className = args.Length > 2 && !string.IsNullOrWhiteSpace(args[2])
                 ? args[2]
-                : "FaIconsFree";
+                : DefaultClassName;
 
             EnsureGitAvailable();
 
@@ -194,7 +199,7 @@ internal static class Program
     private static string SanitizeTypeName(string name)
     {
         // Ensure a safe type name
-        if (string.IsNullOrWhiteSpace(name)) return "FaIconsFree";
+        if (string.IsNullOrWhiteSpace(name)) return DefaultClassName;
         var id = ToPascalCaseIdentifier(name);
         // Remove leading @ if any (not valid for type names)
         if (id.StartsWith("@", StringComparison.Ordinal)) id = id.Substring(1);
@@ -235,6 +240,7 @@ internal static class Program
         "MemberwiseClone",
         "ReferenceEquals"
     };
+
 
     private static void EnsureGitAvailable()
     {
