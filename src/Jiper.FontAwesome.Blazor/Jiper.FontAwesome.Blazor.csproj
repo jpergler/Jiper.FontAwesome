@@ -4,6 +4,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RazorLangVersion>8.0</RazorLangVersion>
+    <DisableImplicitStaticWebAssets>true</DisableImplicitStaticWebAssets>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageId>Jiper.FontAwesome.Blazor</PackageId>
