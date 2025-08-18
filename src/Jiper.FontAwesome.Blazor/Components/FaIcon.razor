@@ -1,6 +1,5 @@
 @using Jiper.FontAwesome.Blazor.Enums
 @using Jiper.FontAwesome.Blazor.Utils
-@using Microsoft.AspNetCore.Components
 
 <i @attributes="AdditionalAttributes"
    id="@Id"
@@ -43,7 +42,7 @@
     [Parameter(CaptureUnmatchedValues = true)] public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     private string CssClass { get; set; } = string.Empty;
-    private string? TabIndexValue => TabIndex.HasValue ? TabIndex.Value.ToString() : null;
+    private string? TabIndexValue => TabIndex?.ToString();
 
     protected override void OnParametersSet()
     {
