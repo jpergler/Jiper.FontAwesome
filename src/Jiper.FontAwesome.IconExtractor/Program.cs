@@ -13,11 +13,11 @@ internal static class Program
         {
             var outputPath = args.Length > 0 && !string.IsNullOrWhiteSpace(args[0])
                 ? Path.GetFullPath(args[0])
-                : Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Icons", "FaIconsFree.cs");
+                : Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Components", "FaIconsFree.cs");
 
             var targetNamespace = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1])
                 ? args[1]
-                : "Jiper.FontAwesome.Blazor.Icons";
+                : "Jiper.FontAwesome.Blazor.Components";
 
             var className = args.Length > 2 && !string.IsNullOrWhiteSpace(args[2])
                 ? args[2]
