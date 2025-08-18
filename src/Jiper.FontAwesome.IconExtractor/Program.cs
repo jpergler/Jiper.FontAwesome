@@ -183,6 +183,10 @@ internal static class Program
         if (CSharpKeywords.Contains(id))
             id = "@" + id;
 
+        // Avoid conflicts with System.Object member names (e.g., Equals, ToString, GetHashCode, GetType, ...)
+        if (ObjectMemberNames.Contains(id))
+            id = id + "_";
+
         return id;
     }
 
@@ -217,6 +221,18 @@ internal static class Program
         "file","from","get","global","group","init","into","join","let","managed","nameof",
         "nint","not","notnull","nuint","on","or","orderby","partial","record","remove","required",
         "scoped","select","set","unmanaged","value","var","when","where","with","yield"
+    };
+
+    // Names of System.Object members to avoid hiding with generated constants.
+    private static readonly HashSet<string> ObjectMemberNames = new(StringComparer.Ordinal)
+    {
+        "Equals",
+        "GetHashCode",
+        "ToString",
+        "GetType",
+        "Finalize",
+        "MemberwiseClone",
+        "ReferenceEquals"
     };
 
     private static void EnsureGitAvailable()
