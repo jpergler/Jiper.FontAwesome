@@ -35,41 +35,28 @@ internal static class Program
 
             try
             {
-                Console.WriteLine("Cloning Font Awesome repository...");
                 RunProcess("git", $"clone --depth 1 https://github.com/FortAwesome/Font-Awesome.git \"{tempDir}\"");
 
-                var dtsPath = Path.Combine(tempDir, "js-packages", "@fortawesome", "fontawesome-common-types", "index.d.ts");
-                if (!File.Exists(dtsPath))
+                var yamlPath = Path.Combine(tempDir, "metadata", "icons.yml");
+                if (!File.Exists(yamlPath))
                 {
-                    throw new FileNotFoundException("Could not find index.d.ts in cloned repository.", dtsPath);
+                    throw new FileNotFoundException("Could not find metadata/icons.yml in cloned repository.", yamlPath);
                 }
 
-                var content = File.ReadAllText(dtsPath);
+                var yamlContent = File.ReadAllText(yamlPath);
+                var byStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
 
-                // Extract the IconName union type block
-                var match = Regex.Match(content, @"export\s+type\s+IconName\s*=\s*(?<body>[\s\S]*?);", RegexOptions.Multiline);
-                if (!match.Success)
-                {
-                    throw new InvalidOperationException("Could not locate `export type IconName = ...;` block in index.d.ts.");
-                }
+                var totalIcons = byStyle.Values.Sum(list => list.Count);
 
-                var body = match.Groups["body"].Value;
-                var iconMatches = Regex.Matches(body, @"'([^']+)'");
-                var iconNames = iconMatches.Cast<Match>().Select(m => m.Groups[1].Value).ToList();
+                Console.WriteLine(totalIcons.ToString(CultureInfo.InvariantCulture));
+                
+                // var generated = GenerateClass(targetNamespace, className, iconNames);
+                // var outputDir = Path.GetDirectoryName(outputPath) ?? Environment.CurrentDirectory;
+                // Directory.CreateDirectory(outputDir);
+                // File.WriteAllText(outputPath, generated, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+                //
+                // Console.WriteLine($"Generated {iconNames.Count} constants into: {outputPath}");
 
-                if (iconNames.Count == 0)
-                {
-                    throw new InvalidOperationException("No IconName entries found in IconName union type.");
-                }
-
-                Console.WriteLine($"Found {iconNames.Count} icon names. Generating constants...");
-
-                var generated = GenerateClass(targetNamespace, className, iconNames);
-                var outputDir = Path.GetDirectoryName(outputPath) ?? Environment.CurrentDirectory;
-                Directory.CreateDirectory(outputDir);
-                File.WriteAllText(outputPath, generated, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
-
-                Console.WriteLine($"Generated {iconNames.Count} constants into: {outputPath}");
                 return 0;
             }
             finally
