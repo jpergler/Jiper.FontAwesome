@@ -28,42 +28,22 @@ internal static class Program
                 ? args[2]
                 : DefaultClassName;
 
-            EnsureGitAvailable();
+            var yamlProvider = new FontAwesomeYamlFreeGitHubSourceProvider();
+            var yamlContent = yamlProvider.GetIconsYaml();
+            var byStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
 
-            var tempDir = Path.Combine(Path.GetTempPath(), "fa-repo-" + Guid.NewGuid().ToString("N"));
-            Directory.CreateDirectory(tempDir);
+            var totalIcons = byStyle.Values.Sum(list => list.Count);
 
-            try
-            {
-                RunProcess("git", $"clone --depth 1 https://github.com/FortAwesome/Font-Awesome.git \"{tempDir}\"");
+            Console.WriteLine(totalIcons.ToString(CultureInfo.InvariantCulture));
 
-                var yamlPath = Path.Combine(tempDir, "metadata", "icons.yml");
-                if (!File.Exists(yamlPath))
-                {
-                    throw new FileNotFoundException("Could not find metadata/icons.yml in cloned repository.", yamlPath);
-                }
+            var generated = GenerateClassByStyle(targetNamespace, className, byStyle);
+            var outputDir = Path.GetDirectoryName(outputPath) ?? Environment.CurrentDirectory;
+            Directory.CreateDirectory(outputDir);
+            File.WriteAllText(outputPath, generated, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
 
-                var yamlContent = File.ReadAllText(yamlPath);
-                var byStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
+            Console.WriteLine($"Generated {totalIcons.ToString(CultureInfo.InvariantCulture)} icon name constants grouped by style into: {outputPath}");
 
-                var totalIcons = byStyle.Values.Sum(list => list.Count);
-
-                Console.WriteLine(totalIcons.ToString(CultureInfo.InvariantCulture));
-                
-                var generated = GenerateClassByStyle(targetNamespace, className, byStyle);
-                var outputDir = Path.GetDirectoryName(outputPath) ?? Environment.CurrentDirectory;
-                Directory.CreateDirectory(outputDir);
-                File.WriteAllText(outputPath, generated, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
-
-                Console.WriteLine($"Generated {totalIcons.ToString(CultureInfo.InvariantCulture)} icon name constants grouped by style into: {outputPath}");
-
-                return 0;
-            }
-            finally
-            {
-                // Clean up the cloned repository
-                TryDeleteDirectory(tempDir);
-            }
+            return 0;
         }
         catch (Exception ex)
         {
