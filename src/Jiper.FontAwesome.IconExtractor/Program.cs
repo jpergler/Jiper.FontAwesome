@@ -28,7 +28,7 @@ internal static class Program
                 ? args[2]
                 : DefaultClassName;
 
-            var yamlProvider = new FontAwesomeYamlFreeGitHubSourceProvider();
+            var yamlProvider = new FontAwesomeYamlFreeNpmSourceProvider();
             var yamlContent = yamlProvider.GetIconsYaml();
             var byStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
 
