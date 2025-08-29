@@ -17,6 +17,39 @@ internal static class Program
     {
         try
         {
+            // If no arguments are provided, generate both Pro and Free icon name files by default.
+            if (args.Length == 0)
+            {
+                void GenerateOne(string classNameLocal, string sourceLocal)
+                {
+                    var targetNamespaceLocal = DefaultNamespace;
+                    var outputPathLocal = GetDefaultOutputPath(classNameLocal);
+
+                    // Select provider by source argument: "pro" uses npm (requires token), "free" uses GitHub (no token).
+                    IIconYamlProvider yamlProviderLocal = sourceLocal.Equals("free", StringComparison.OrdinalIgnoreCase)
+                        ? new FontAwesomeYamlFreeGitHubSourceProvider()
+                        : new FontAwesomeYamlFreeNpmSourceProvider();
+
+                    var yamlContentLocal = yamlProviderLocal.GetIconsYaml();
+                    var byStyleLocal = FontAwesomeYamlParser.ParseIconsByStyle(yamlContentLocal);
+
+                    var totalIconsLocal = byStyleLocal.Values.Sum(list => list.Count);
+                    Console.WriteLine(totalIconsLocal.ToString(CultureInfo.InvariantCulture));
+
+                    var generatedLocal = GenerateClassByStyle(targetNamespaceLocal, classNameLocal, byStyleLocal);
+                    var outputDirLocal = Path.GetDirectoryName(outputPathLocal) ?? Environment.CurrentDirectory;
+                    Directory.CreateDirectory(outputDirLocal);
+                    File.WriteAllText(outputPathLocal, generatedLocal, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
+
+                    Console.WriteLine($"Generated {totalIconsLocal.ToString(CultureInfo.InvariantCulture)} icon name constants grouped by style into: {outputPathLocal}");
+                }
+
+                // Generate Pro and Free icon name classes into the IconNames project by default.
+                GenerateOne("FaIconsPro", "pro");
+                GenerateOne("FaIconsFree", "free");
+                return 0;
+            }
+
             var targetNamespace = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1])
                 ? args[1]
                 : DefaultNamespace;

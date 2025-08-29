@@ -6,26 +6,4 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
-    <!-- Build the extractor first so we can run it -->
-    <ItemGroup>
-        <ProjectReference Include="..\Jiper.FontAwesome.IconExtractor\Jiper.FontAwesome.IconExtractor.csproj" />
-    </ItemGroup>
-
-    <!-- Generate icon name classes before compilation -->
-    <Target Name="GenerateFontAwesomeIcons" BeforeTargets="BeforeCompile">
-        <!-- Output paths -->
-        <PropertyGroup>
-            <FaIconsProPath>$(MSBuildProjectDirectory)/FaIconsPro.cs</FaIconsProPath>
-            <FaIconsFreePath>$(MSBuildProjectDirectory)/FaIconsFree.cs</FaIconsFreePath>
-            <GeneratorProject>$(MSBuildProjectDirectory)/../Jiper.FontAwesome.IconExtractor/Jiper.FontAwesome.IconExtractor.csproj</GeneratorProject>
-            <GeneratorNamespace>Jiper.FontAwesome.IconNames</GeneratorNamespace>
-        </PropertyGroup>
-
-        <!-- Generate Pro icons (requires Font Awesome npm token via console/env/cache) -->
-        <Exec Command="dotnet run --project &quot;$(GeneratorProject)&quot; -- &quot;$(FaIconsProPath)&quot; &quot;$(GeneratorNamespace)&quot; &quot;FaIconsPro&quot; pro" />
-
-        <!-- Generate Free icons (no token required) -->
-        <Exec Command="dotnet run --project &quot;$(GeneratorProject)&quot; -- &quot;$(FaIconsFreePath)&quot; &quot;$(GeneratorNamespace)&quot; &quot;FaIconsFree&quot; free" />
-    </Target>
-
 </Project>
