@@ -40,6 +40,9 @@ jobs:
       - name: Restore
         run: dotnet restore ./src/Jiper.FontAwesome.Blazor/Jiper.FontAwesome.Blazor.csproj
 
+      - name: Restore IconNames
+        run: dotnet restore ./src/Jiper.FontAwesome.IconNames/Jiper.FontAwesome.IconNames.csproj
+
       - name: Build (Release)
         run: |
           dotnet build ./src/Jiper.FontAwesome.Blazor/Jiper.FontAwesome.Blazor.csproj \
@@ -47,9 +50,25 @@ jobs:
             -p:ContinuousIntegrationBuild=true \
             -p:Version=${{ steps.ver.outputs.version }}
 
+      - name: Build IconNames (Release)
+        run: |
+          dotnet build ./src/Jiper.FontAwesome.IconNames/Jiper.FontAwesome.IconNames.csproj \
+            -c Release \
+            -p:ContinuousIntegrationBuild=true \
+            -p:Version=${{ steps.ver.outputs.version }}
+
       - name: Pack (no build)
         run: |
           dotnet pack ./src/Jiper.FontAwesome.Blazor/Jiper.FontAwesome.Blazor.csproj \
+            -c Release \
+            --no-build \
+            -p:ContinuousIntegrationBuild=true \
+            -p:Version=${{ steps.ver.outputs.version }} \
+            -o ./artifacts
+
+      - name: Pack IconNames (no build)
+        run: |
+          dotnet pack ./src/Jiper.FontAwesome.IconNames/Jiper.FontAwesome.IconNames.csproj \
             -c Release \
             --no-build \
             -p:ContinuousIntegrationBuild=true \
