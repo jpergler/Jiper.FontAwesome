@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Jiper.FontAwesome.IconExtractor;
 
-public sealed class FontAwesomeYamlFreeGitHubSourceProvider
+public sealed class FontAwesomeYamlFreeGitHubSourceProvider : IIconYamlProvider
 {
     private const string RepoUrl = "https://github.com/FortAwesome/Font-Awesome.git";
     private const string IconsYamlRelativePath = "metadata/icons.yml";

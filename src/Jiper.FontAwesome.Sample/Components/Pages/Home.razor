@@ -1,16 +1,17 @@
 ﻿@page "/"
 @using Jiper.FontAwesome.Blazor.Components
 @using Jiper.FontAwesome.Blazor.Enums
+@using Jiper.FontAwesome.IconNames
 
 <PageTitle>FaIcon component samples</PageTitle>
 
 <h1>FaIcon component samples</h1>
 
-<FaIcon Icon="@FaIconsFree.User"/>
-<FaIcon Icon="@FaIconsFree.HomeAlt"/>
-<FaIcon Icon="@FaIconsFree.UserCircle" Rotation="IconRotation.Rotate180"/>
+<FaIcon Icon="@FaIconsFree.Solid.User"/>
+<FaIcon Icon="@FaIconsFree.Solid.HomeAlt"/>
+<FaIcon Icon="@FaIconsFree.Solid.UserCircle" Rotation="IconRotation.Rotate180"/>
 
 <FaStack>
-    <FaIcon Icon="@FaIcons.Solid.LocationPin" StackLayer="StackLayerSize.TwoX" Style="color: forestgreen"/>
-    <FaIcon Icon="@FaIconsFree.UserCircle" StackLayer="StackLayerSize.OneX" Style="color: yellow"/>
+    <FaIcon Icon="@FaIconsFree.Solid.LocationPin" StackLayer="StackLayerSize.TwoX" Style="color: forestgreen"/>
+    <FaIcon Icon="@FaIconsFree.Solid.UserCircle" StackLayer="StackLayerSize.OneX" Style="color: yellow"/>
 </FaStack>

@@ -7,19 +7,16 @@ namespace Jiper.FontAwesome.IconExtractor;
 
 internal static class Program
 {
-    private const string DefaultNamespace = "Jiper.FontAwesome.Blazor.Components";
+    private const string DefaultNamespace = "Jiper.FontAwesome.IconNames";
     private const string DefaultClassName = "FaIcons";
-    private const string DefaultFileName = DefaultClassName + ".cs";
-    private static readonly string DefaultOutputPath = Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.Blazor/Components", DefaultFileName);
+    // Default output written into IconNames project; file name is determined from the class name (e.g., FaIconsPro.cs / FaIconsFree.cs)
+    private static string GetDefaultOutputPath(string className) =>
+        Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.IconNames", SanitizeTypeName(className) + ".cs");
 
     private static int Main(string[] args)
     {
         try
         {
-            var outputPath = args.Length > 0 && !string.IsNullOrWhiteSpace(args[0])
-                ? Path.GetFullPath(args[0])
-                : DefaultOutputPath;
-
             var targetNamespace = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1])
                 ? args[1]
                 : DefaultNamespace;
@@ -28,7 +25,19 @@ internal static class Program
                 ? args[2]
                 : DefaultClassName;
 
-            var yamlProvider = new FontAwesomeYamlFreeNpmSourceProvider();
+            var source = args.Length > 3 && !string.IsNullOrWhiteSpace(args[3])
+                ? args[3]
+                : "pro";
+
+            var outputPath = args.Length > 0 && !string.IsNullOrWhiteSpace(args[0])
+                ? Path.GetFullPath(args[0])
+                : GetDefaultOutputPath(className);
+
+            // Select provider by source argument: "pro" uses npm (requires token), "free" uses GitHub (no token).
+            IIconYamlProvider yamlProvider = source.Equals("free", StringComparison.OrdinalIgnoreCase)
+                ? new FontAwesomeYamlFreeGitHubSourceProvider()
+                : new FontAwesomeYamlFreeNpmSourceProvider();
+
             var yamlContent = yamlProvider.GetIconsYaml();
             var byStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
 

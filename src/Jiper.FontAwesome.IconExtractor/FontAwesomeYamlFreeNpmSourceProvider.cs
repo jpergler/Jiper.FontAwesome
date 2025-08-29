@@ -2,7 +2,7 @@ using System.Diagnostics;
 
 namespace Jiper.FontAwesome.IconExtractor;
 
-public sealed class FontAwesomeYamlFreeNpmSourceProvider
+public sealed class FontAwesomeYamlFreeNpmSourceProvider : IIconYamlProvider
 {
     private const string PackageName = "@fortawesome/fontawesome-free";
     private const string IconsYamlRelativePath = "metadata/icons.yml";
