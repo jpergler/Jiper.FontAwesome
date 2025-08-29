@@ -4,6 +4,16 @@
         <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        
+        <TrimUnusedDependencies>true</TrimUnusedDependencies>
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageId>Jiper.FontAwesome.IconNames</PackageId>
+        <Version>0.1.0</Version>
+        <Authors>Jindřich Pergler</Authors>
+        <Description>Strongly typed icon names for FontAwesome Free and Pro</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/jpergler/Jiper.FontAwesome</RepositoryUrl>
     </PropertyGroup>
 
 </Project>
