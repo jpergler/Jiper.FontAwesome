@@ -48,10 +48,55 @@
 
     protected override void OnParametersSet()
     {
+        static bool ContainsStylePrefix(string? icon)
+        {
+            if (string.IsNullOrWhiteSpace(icon)) return false;
+
+            var tokens = icon.Split((char[])null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            foreach (var t in tokens)
+            {
+                var tl = t.ToLowerInvariant();
+                // 3-letter style prefixes
+                if (tl is "fas" or "far" or "fal" or "fat" or "fad" or "fab") return true;
+                // long style class names
+                if (tl is "fa-solid" or "fa-regular" or "fa-light" or "fa-thin" or "fa-duotone" or "fa-brands") return true;
+            }
+
+            return false;
+        }
+
+        static string BuildIconClasses(string? icon)
+        {
+            if (string.IsNullOrWhiteSpace(icon)) return string.Empty;
+
+            var trimmed = icon.Trim();
+
+            // If multiple tokens are provided, assume caller supplied complete classes (e.g., "fas fa-arrow-right")
+            if (trimmed.IndexOf(' ') >= 0)
+            {
+                var parts = trimmed
+                    .Split((char[])null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .Select(p => p.ToLowerInvariant());
+                return string.Join(' ', parts);
+            }
+
+            // If already an fa-* class, just normalize casing
+            if (trimmed.StartsWith("fa-", StringComparison.OrdinalIgnoreCase))
+            {
+                return trimmed.ToLowerInvariant();
+            }
+
+            // Otherwise, normalize single icon name into "fa-<kebab>"
+            return ClassBuilder.NormalizeIconName(trimmed);
+        }
+
+        var hasStyleInIcon = ContainsStylePrefix(Icon);
+        var normalizedIcon = BuildIconClasses(Icon);
+
         CssClass = ClassBuilder
             .Create()
-            .Add(ClassBuilder.StyleToClass(IconStyle))
-            .Add(ClassBuilder.NormalizeIconName(Icon))
+            .AddIf(!hasStyleInIcon, ClassBuilder.StyleToClass(IconStyle))
+            .Add(normalizedIcon)
             .Add(ClassBuilder.SizeToClass(Size))
             .Add(ClassBuilder.AnimationToClass(Animation))
             .Add(ClassBuilder.RotationToClass(Rotation))
