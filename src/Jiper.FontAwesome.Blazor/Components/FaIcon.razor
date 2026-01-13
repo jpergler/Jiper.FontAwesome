@@ -1,5 +1,6 @@
 @using Jiper.FontAwesome.Blazor.Enums
 @using Jiper.FontAwesome.Blazor.Utils
+@using Jiper.FontAwesome.IconNames
 
 <i @attributes="AdditionalAttributes"
    id="@Id"
@@ -14,7 +15,8 @@
 @code
 {
     [Parameter] public string Icon { get; set; } = string.Empty;
-    [Parameter] public IconStyle IconStyle { get; set; } = IconStyle.Solid;
+    [Parameter] public IconStyle IconStyle { get; set; } = DefaultStyle;
+    [Parameter] public IconPack Pack { get; set; } = DefaultPack;
 
     [Parameter] public IconSize Size { get; set; } = IconSize.None;
     [Parameter] public IconAnimation Animation { get; set; } = IconAnimation.None;
@@ -42,6 +44,9 @@
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    public static IconStyle DefaultStyle = IconStyle.Solid;
+    public static IconPack DefaultPack = IconPack.Classic;
 
     private string CssClass { get; set; } = string.Empty;
     private string? TabIndexValue => TabIndex?.ToString();
@@ -93,10 +98,14 @@
         var hasStyleInIcon = ContainsStylePrefix(Icon);
         var normalizedIcon = BuildIconClasses(Icon);
 
+        // normalizedIcon = FaUtils.NormalizeWithDefaultPrefix(Icon);
+        var combinedIconName = Fa.Icon(ClassBuilder.PackToClass(Pack), ClassBuilder.StyleToClass(IconStyle), Icon);
+
         CssClass = ClassBuilder
             .Create()
-            .AddIf(!hasStyleInIcon, ClassBuilder.StyleToClass(IconStyle))
-            .Add(normalizedIcon)
+            // .AddIf(!hasStyleInIcon, ClassBuilder.StyleToClass(IconStyle))
+            // .Add(normalizedIcon)
+            .Add(combinedIconName)
             .Add(ClassBuilder.SizeToClass(Size))
             .Add(ClassBuilder.AnimationToClass(Animation))
             .Add(ClassBuilder.RotationToClass(Rotation))

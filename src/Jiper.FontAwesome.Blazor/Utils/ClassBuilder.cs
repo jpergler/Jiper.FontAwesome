@@ -64,7 +64,7 @@ internal static class ClassBuilder
         return sb.ToString();
     }
 
-    public static string? StyleToClass(IconStyle style) => style switch
+    public static string StyleToClass(IconStyle style) => style switch
     {
         IconStyle.Solid => "fa-solid",
         IconStyle.Regular => "fa-regular",
@@ -72,7 +72,17 @@ internal static class ClassBuilder
         IconStyle.Thin => "fa-thin",
         IconStyle.Duotone => "fa-duotone",
         IconStyle.Brands => "fa-brands",
-        _ => null
+        _ => throw new ArgumentOutOfRangeException(nameof(style), style, null)
+    };
+    
+    public static string? PackToClass(IconPack pack) => pack switch
+    {
+        IconPack.Classic => null,
+        IconPack.Sharp => "fa-sharp",
+        IconPack.Duotone => "fa-duotone",
+        IconPack.SharpDuotone => "fa-sharp-duotone",
+        IconPack.Brands => "fa-brands",
+        _ => throw new ArgumentOutOfRangeException(nameof(pack), pack, null)
     };
 
     public static string? SizeToClass(IconSize size) => size switch

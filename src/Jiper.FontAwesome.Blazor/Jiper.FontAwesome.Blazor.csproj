@@ -19,4 +19,8 @@
         <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
     </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Jiper.FontAwesome.IconNames\Jiper.FontAwesome.IconNames.csproj" />
+    </ItemGroup>
 </Project>

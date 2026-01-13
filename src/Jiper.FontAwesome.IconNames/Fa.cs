@@ -7,7 +7,7 @@ public partial class Fa
 
     public static string Prefix = "fa";
 
-    public static string Icon(string pack, string style, string icon) => new FaIconCssClassBuilder().Pack(pack).Style(style).Icon(icon).Build();
+    public static string Icon(string? pack, string style, string icon) => new FaIconCssClassBuilder().Pack(pack).Style(style).Icon(icon).Build();
     public static string Icon(string icon) => new FaIconCssClassBuilder().Pack(DefaultPack).Style(DefaultStyle).Icon(icon).Build();
 
     public static class Classic
