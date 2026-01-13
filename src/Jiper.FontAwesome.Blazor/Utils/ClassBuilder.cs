@@ -70,8 +70,6 @@ internal static class ClassBuilder
         IconStyle.Regular => "fa-regular",
         IconStyle.Light => "fa-light",
         IconStyle.Thin => "fa-thin",
-        IconStyle.Duotone => "fa-duotone",
-        IconStyle.Brands => "fa-brands",
         _ => throw new ArgumentOutOfRangeException(nameof(style), style, null)
     };
     

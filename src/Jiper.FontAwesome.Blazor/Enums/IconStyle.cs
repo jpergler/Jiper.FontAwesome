@@ -5,7 +5,5 @@ public enum IconStyle
     Solid,
     Regular,
     Light,
-    Thin,
-    Duotone,
-    Brands
+    Thin
 }
