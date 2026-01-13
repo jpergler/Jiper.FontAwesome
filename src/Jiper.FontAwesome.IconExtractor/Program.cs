@@ -10,8 +10,7 @@ internal static class Program
 
     // Default output written into IconNames project; file name is determined from the class name (e.g., FaIconsPro.cs / FaIconsFree.cs)
     private static string GetDefaultOutputPath(string className) =>
-        Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.IconNames",
-            IdentifierHelper.SanitizeTypeName(className) + ".cs");
+        Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.IconNames", className + ".cs");
 
     private static int Main(string[] args)
     {
@@ -69,11 +68,12 @@ internal static class Program
 
     private static void GenerateIconNamesFile(IconGenerationService service)
     {
-        const string className = "FaIconNames";
+        const string className = "Names";
         const string source = "pro";
         const string solidStyle = "solid";
 
-        var result = service.GenerateIconNames(className, DefaultNamespace, GetDefaultOutputPath(className), source, solidStyle);
+        var outputPath = GetDefaultOutputPath("Fa.Names");
+        var result = service.GenerateIconNames(className, DefaultNamespace, outputPath, source, solidStyle);
         service.PrintResult(result);
     }
 }

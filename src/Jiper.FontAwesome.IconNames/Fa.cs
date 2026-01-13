@@ -1,6 +1,6 @@
 namespace Jiper.FontAwesome.IconNames;
 
-public class Fa
+public partial class Fa
 {
     public static string? DefaultPack = FaIconPacks.Classic;
     public static string DefaultStyle = FaIconStyles.Solid;
