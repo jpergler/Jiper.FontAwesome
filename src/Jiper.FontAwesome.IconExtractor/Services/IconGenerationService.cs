@@ -43,6 +43,44 @@ public sealed class IconGenerationService
     }
 
     /// <summary>
+    /// Generates icon names file for a specific style without style prefixes.
+    /// </summary>
+    public GenerationResult GenerateIconNames(string className, string targetNamespace, string outputPath, string source, string style)
+    {
+        // Fetch YAML content
+        var yamlProvider = YamlProviderFactory.Create(source);
+        var yamlContent = yamlProvider.GetIconsYaml();
+
+        // Parse YAML to icon data structures
+        var iconsByStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
+
+        // Get icons for the specified style
+        if (!iconsByStyle.TryGetValue(style, out var icons))
+        {
+            throw new InvalidOperationException($"Style '{style}' not found in icon data.");
+        }
+
+        // Count total icons
+        var totalIcons = icons.Count;
+
+        // Generate C# code using the icon names generator
+        var generatedCode = IconNamesCodeGenerator.GenerateIconNamesClass(
+            targetNamespace,
+            className,
+            icons);
+
+        // Write to file
+        FileSystemHelper.WriteGeneratedCode(outputPath, generatedCode);
+
+        return new GenerationResult
+        {
+            TotalIcons = totalIcons,
+            OutputPath = outputPath,
+            Success = true
+        };
+    }
+
+    /// <summary>
     /// Prints generation result to console.
     /// </summary>
     public void PrintResult(GenerationResult result)

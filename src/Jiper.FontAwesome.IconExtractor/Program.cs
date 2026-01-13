@@ -30,8 +30,8 @@ internal static class Program
             var options = ArgumentParser.Parse(args);
 
             // Generate icon file
-            var result = service.Generate(options);
-            service.PrintResult(result);
+            // var result = service.Generate(options);
+            // service.PrintResult(result);
 
             return 0;
         }
@@ -48,8 +48,9 @@ internal static class Program
     /// </summary>
     private static void GenerateDefaultFiles(IconGenerationService service)
     {
-        GenerateSingleFile(service, "FaIconsPro", "pro");
-        GenerateSingleFile(service, "FaIconsFree", "free");
+        // GenerateSingleFile(service, "FaIconsPro", "pro");
+        // GenerateSingleFile(service, "FaIconsFree", "free");
+        GenerateIconNamesFile(service);
     }
 
     private static void GenerateSingleFile(IconGenerationService service, string className, string source)
@@ -63,6 +64,16 @@ internal static class Program
         };
 
         var result = service.Generate(options);
+        service.PrintResult(result);
+    }
+
+    private static void GenerateIconNamesFile(IconGenerationService service)
+    {
+        const string className = "FaIconNames";
+        const string source = "pro";
+        const string solidStyle = "solid";
+
+        var result = service.GenerateIconNames(className, DefaultNamespace, GetDefaultOutputPath(className), source, solidStyle);
         service.PrintResult(result);
     }
 }
