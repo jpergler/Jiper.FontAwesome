@@ -1,15 +1,18 @@
 ﻿<Solution>
   <Folder Name="/Packages/">
-    <Project Path="src\Jiper.FontAwesome.Blazor\Jiper.FontAwesome.Blazor.csproj" Type="Classic C#" />
-    <Project Path="src\Jiper.FontAwesome.IconNames\Jiper.FontAwesome.IconNames.csproj" Type="Classic C#" />
+    <Project Path="src\Jiper.FontAwesome.Blazor\Jiper.FontAwesome.Blazor.csproj" />
+    <Project Path="src\Jiper.FontAwesome.IconNames\Jiper.FontAwesome.IconNames.csproj" />
   </Folder>
   <Folder Name="/Samples/">
-    <Project Path="src\Jiper.FontAwesome.Sample\Jiper.FontAwesome.Sample.csproj" Type="Classic C#" />
+    <Project Path="src\Jiper.FontAwesome.Sample\Jiper.FontAwesome.Sample.csproj" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
   </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="src/Jiper.FontAwesome.Tests/Jiper.FontAwesome.Tests.csproj" />
+  </Folder>
   <Folder Name="/Tools/">
-    <Project Path="src\Jiper.FontAwesome.IconExtractor\Jiper.FontAwesome.IconExtractor.csproj" Type="Classic C#" />
+    <Project Path="src\Jiper.FontAwesome.IconExtractor\Jiper.FontAwesome.IconExtractor.csproj" />
   </Folder>
 </Solution>
