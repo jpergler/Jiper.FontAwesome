@@ -1,89 +1,37 @@
-﻿using System.Diagnostics;
-using System.Globalization;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using Jiper.FontAwesome.IconExtractor.Configuration;
+using Jiper.FontAwesome.IconExtractor.Services;
+using Jiper.FontAwesome.IconExtractor.Utilities;
 
 namespace Jiper.FontAwesome.IconExtractor;
 
 internal static class Program
 {
     private const string DefaultNamespace = "Jiper.FontAwesome.IconNames";
-    private const string DefaultClassName = "FaIcons";
+
     // Default output written into IconNames project; file name is determined from the class name (e.g., FaIconsPro.cs / FaIconsFree.cs)
     private static string GetDefaultOutputPath(string className) =>
-        Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.IconNames", SanitizeTypeName(className) + ".cs");
+        Path.Combine(Environment.CurrentDirectory, "../../../../Jiper.FontAwesome.IconNames",
+            IdentifierHelper.SanitizeTypeName(className) + ".cs");
 
     private static int Main(string[] args)
     {
         try
         {
+            var service = new IconGenerationService();
+
             // If no arguments are provided, generate both Pro and Free icon name files by default.
             if (args.Length == 0)
             {
-                void GenerateOne(string classNameLocal, string sourceLocal)
-                {
-                    var targetNamespaceLocal = DefaultNamespace;
-                    var outputPathLocal = GetDefaultOutputPath(classNameLocal);
-
-                    // Select provider by source argument: "pro" uses npm (requires token), "free" uses GitHub (no token).
-                    IIconYamlProvider yamlProviderLocal = sourceLocal.Equals("free", StringComparison.OrdinalIgnoreCase)
-                        ? new FontAwesomeYamlFreeGitHubSourceProvider()
-                        : new FontAwesomeYamlFreeNpmSourceProvider();
-
-                    var yamlContentLocal = yamlProviderLocal.GetIconsYaml();
-                    var byStyleLocal = FontAwesomeYamlParser.ParseIconsByStyle(yamlContentLocal);
-
-                    var totalIconsLocal = byStyleLocal.Values.Sum(list => list.Count);
-                    Console.WriteLine(totalIconsLocal.ToString(CultureInfo.InvariantCulture));
-
-                    var generatedLocal = GenerateClassByStyle(targetNamespaceLocal, classNameLocal, byStyleLocal);
-                    var outputDirLocal = Path.GetDirectoryName(outputPathLocal) ?? Environment.CurrentDirectory;
-                    Directory.CreateDirectory(outputDirLocal);
-                    File.WriteAllText(outputPathLocal, generatedLocal, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
-
-                    Console.WriteLine($"Generated {totalIconsLocal.ToString(CultureInfo.InvariantCulture)} icon name constants grouped by style into: {outputPathLocal}");
-                }
-
-                // Generate Pro and Free icon name classes into the IconNames project by default.
-                GenerateOne("FaIconsPro", "pro");
-                GenerateOne("FaIconsFree", "free");
+                GenerateDefaultFiles(service);
                 return 0;
             }
 
-            var targetNamespace = args.Length > 1 && !string.IsNullOrWhiteSpace(args[1])
-                ? args[1]
-                : DefaultNamespace;
+            // Parse command-line arguments
+            var options = ArgumentParser.Parse(args);
 
-            var className = args.Length > 2 && !string.IsNullOrWhiteSpace(args[2])
-                ? args[2]
-                : DefaultClassName;
-
-            var source = args.Length > 3 && !string.IsNullOrWhiteSpace(args[3])
-                ? args[3]
-                : "pro";
-
-            var outputPath = args.Length > 0 && !string.IsNullOrWhiteSpace(args[0])
-                ? Path.GetFullPath(args[0])
-                : GetDefaultOutputPath(className);
-
-            // Select provider by source argument: "pro" uses npm (requires token), "free" uses GitHub (no token).
-            IIconYamlProvider yamlProvider = source.Equals("free", StringComparison.OrdinalIgnoreCase)
-                ? new FontAwesomeYamlFreeGitHubSourceProvider()
-                : new FontAwesomeYamlFreeNpmSourceProvider();
-
-            var yamlContent = yamlProvider.GetIconsYaml();
-            var byStyle = FontAwesomeYamlParser.ParseIconsByStyle(yamlContent);
-
-            var totalIcons = byStyle.Values.Sum(list => list.Count);
-
-            Console.WriteLine(totalIcons.ToString(CultureInfo.InvariantCulture));
-
-            var generated = GenerateClassByStyle(targetNamespace, className, byStyle);
-            var outputDir = Path.GetDirectoryName(outputPath) ?? Environment.CurrentDirectory;
-            Directory.CreateDirectory(outputDir);
-            File.WriteAllText(outputPath, generated, new UTF8Encoding(encoderShouldEmitUTF8Identifier: true));
-
-            Console.WriteLine($"Generated {totalIcons.ToString(CultureInfo.InvariantCulture)} icon name constants grouped by style into: {outputPath}");
+            // Generate icon file
+            var result = service.Generate(options);
+            service.PrintResult(result);
 
             return 0;
         }
@@ -95,307 +43,26 @@ internal static class Program
         }
     }
 
-    private static string GenerateClass(string namespaceName, string className, IList<string> kebabNames)
+    /// <summary>
+    /// Generates both Pro and Free icon name files by default.
+    /// </summary>
+    private static void GenerateDefaultFiles(IconGenerationService service)
     {
-        var usedIdentifiers = new HashSet<string>(StringComparer.Ordinal);
-        var sb = new StringBuilder();
-
-        sb.AppendLine("// <auto-generated />");
-        sb.AppendLine("// This file was generated by Jiper.FontAwesome.IconExtractor");
-        sb.AppendLine("// Source: https://github.com/FortAwesome/Font-Awesome");
-        sb.AppendLine($"// Generated at: {DateTimeOffset.Now:O}");
-        sb.AppendLine();
-        sb.AppendLine($"namespace {namespaceName};");
-        sb.AppendLine();
-        sb.AppendLine($"public static class {SanitizeTypeName(className)}");
-        sb.AppendLine("{");
-
-        foreach (var kebab in kebabNames)
-        {
-            var identifier = ToPascalCaseIdentifier(kebab);
-
-            // Ensure uniqueness
-            var baseId = identifier;
-            var suffix = 1;
-            while (!usedIdentifiers.Add(identifier))
-            {
-                identifier = $"{baseId}_{suffix++}";
-            }
-
-            sb.Append("    public const string ").Append(identifier).Append(" = ").Append('"').Append(kebab).AppendLine("\";");
-        }
-
-        sb.AppendLine("}");
-
-        return sb.ToString();
+        GenerateSingleFile(service, "FaIconsPro", "pro");
+        GenerateSingleFile(service, "FaIconsFree", "free");
     }
 
-    private static string GenerateClassByStyle(string namespaceName, string outerClassName, Dictionary<string, List<IconInfo>> byStyle)
+    private static void GenerateSingleFile(IconGenerationService service, string className, string source)
     {
-        var sb = new StringBuilder();
-
-        // Local helper to map FA styles to their class prefixes (e.g., solid -> fas)
-        static string GetFaStylePrefix(string style)
+        var options = new GenerationOptions
         {
-            if (string.IsNullOrWhiteSpace(style)) return "fa";
-            var s = style.Trim().ToLowerInvariant();
-
-            // Handle common styles and combinations (e.g., sharp-solid contains "solid")
-            if (s.Contains("brand")) return "fab";
-            if (s.Contains("regular")) return "far";
-            if (s.Contains("solid")) return "fas";
-            if (s.Contains("light")) return "fal";
-            if (s.Contains("thin")) return "fat";
-            if (s.Contains("duotone")) return "fad";
-
-            return "fa";
-        }
-
-        sb.AppendLine("// <auto-generated />");
-        sb.AppendLine("// This file was generated by Jiper.FontAwesome.IconExtractor");
-        sb.AppendLine("// Source: https://github.com/FortAwesome/Font-Awesome");
-        sb.AppendLine($"// Generated at: {DateTimeOffset.Now:O}");
-        sb.AppendLine();
-        sb.AppendLine($"namespace {namespaceName};");
-        sb.AppendLine();
-        sb.AppendLine($"public static partial class {SanitizeTypeName(outerClassName)}");
-        sb.AppendLine("{");
-
-        foreach (var kvp in byStyle.OrderBy(k => SanitizeTypeName(k.Key), StringComparer.Ordinal))
-        {
-            var styleClassName = SanitizeTypeName(kvp.Key);
-            var stylePrefix = GetFaStylePrefix(kvp.Key);
-            sb.AppendLine($"    public static class {styleClassName}");
-            sb.AppendLine("    {");
-
-            var usedIdentifiers = new HashSet<string>(StringComparer.Ordinal);
-            var kebabNames = new HashSet<string>(StringComparer.Ordinal);
-
-            foreach (var icon in kvp.Value)
-            {
-                if (!string.IsNullOrWhiteSpace(icon.Name))
-                    kebabNames.Add(icon.Name);
-
-                if (icon.Aliases != null)
-                {
-                    foreach (var alias in icon.Aliases)
-                    {
-                        if (!string.IsNullOrWhiteSpace(alias))
-                            kebabNames.Add(alias);
-                    }
-                }
-            }
-
-            foreach (var kebab in kebabNames.OrderBy(n => n, StringComparer.Ordinal))
-            {
-                var identifier = ToPascalCaseIdentifier(kebab);
-
-                var baseId = identifier;
-                var suffix = 1;
-                while (!usedIdentifiers.Add(identifier))
-                {
-                    identifier = $"{baseId}_{suffix++}";
-                }
-
-                // Include style prefix and the 'fa-' prefixed icon class (e.g., "fas fa-arrow-right")
-                sb.Append("        public const string ").Append(identifier).Append(" = ").Append('"').Append(stylePrefix).Append(' ').Append("fa-").Append(kebab).AppendLine("\";");
-            }
-
-            sb.AppendLine("    }");
-            sb.AppendLine();
-        }
-
-        sb.AppendLine("}");
-
-        return sb.ToString();
-    }
-
-    private static string ToPascalCaseIdentifier(string kebab)
-    {
-        if (string.IsNullOrWhiteSpace(kebab))
-            return "_";
-
-        string id;
-
-        // If the input is a single alphanumeric token (no separators) and appears to be
-        // camelCase/PascalCase already, preserve its internal casing and just ensure
-        // the first character is uppercase (when it's a letter).
-        if (Regex.IsMatch(kebab, @"^[A-Za-z0-9]+$") && (char.IsUpper(kebab[0]) || kebab.Skip(1).Any(char.IsUpper)))
-        {
-            id = char.IsLetter(kebab[0])
-                ? char.ToUpper(kebab[0], CultureInfo.InvariantCulture) + kebab.Substring(1)
-                : kebab;
-        }
-        else
-        {
-            // Split on non-alphanumeric characters
-            var parts = Regex.Split(kebab, "[^A-Za-z0-9]+")
-                .Where(p => p.Length > 0)
-                .ToArray();
-
-            // PascalCase each part
-            var sb = new StringBuilder();
-            foreach (var p in parts)
-            {
-                if (p.Length == 0) continue;
-
-                // If the part is all digits, keep as is
-                if (p.All(char.IsDigit))
-                {
-                    sb.Append(p);
-                    continue;
-                }
-
-                // Title case: first letter upper, rest lower (preserve digits)
-                var first = p[0];
-                var rest = p.Length > 1 ? p.Substring(1) : string.Empty;
-
-                sb.Append(char.ToUpper(first, CultureInfo.InvariantCulture));
-                sb.Append(rest.ToLower(CultureInfo.InvariantCulture));
-            }
-
-            id = sb.Length > 0 ? sb.ToString() : "_";
-        }
-
-        // If starts with a digit, prefix underscore
-        if (char.IsDigit(id[0]))
-            id = "_" + id;
-
-        // If identifier becomes empty or invalid start char, fix
-        if (!IsValidIdentifierStart(id[0]))
-            id = "_" + id;
-
-        // Replace any remaining invalid characters (shouldn't be any after split), but just in case
-        var cleaned = new StringBuilder(id.Length);
-        foreach (var ch in id)
-        {
-            cleaned.Append(IsValidIdentifierPart(ch) ? ch : '_');
-        }
-
-        id = cleaned.ToString();
-
-        // Escape C# keywords
-        if (CSharpKeywords.Contains(id))
-            id = "@" + id;
-
-        // Avoid conflicts with System.Object member names (e.g., Equals, ToString, GetHashCode, GetType, ...)
-        if (ObjectMemberNames.Contains(id))
-            id = id + "_";
-
-        return id;
-    }
-
-    private static string SanitizeTypeName(string name)
-    {
-        // Ensure a safe type name
-        if (string.IsNullOrWhiteSpace(name)) return DefaultClassName;
-        var id = ToPascalCaseIdentifier(name);
-        // Remove leading @ if any (not valid for type names)
-        if (id.StartsWith("@", StringComparison.Ordinal)) id = id.Substring(1);
-        return id;
-    }
-
-    private static bool IsValidIdentifierStart(char ch) =>
-        ch == '_' || char.IsLetter(ch);
-
-    private static bool IsValidIdentifierPart(char ch) =>
-        ch == '_' || char.IsLetterOrDigit(ch);
-
-    private static readonly HashSet<string> CSharpKeywords = new(StringComparer.Ordinal)
-    {
-        "abstract", "as", "base", "bool", "break", "byte", "case", "catch", "char", "checked", "class",
-        "const", "continue", "decimal", "default", "delegate", "do", "double", "else", "enum", "event",
-        "explicit", "extern", "false", "finally", "fixed", "float", "for", "foreach", "goto", "if",
-        "implicit", "in", "int", "interface", "internal", "is", "lock", "long", "namespace", "new",
-        "null", "object", "operator", "out", "override", "params", "private", "protected", "public",
-        "readonly", "ref", "return", "sbyte", "sealed", "short", "sizeof", "stackalloc", "static",
-        "string", "struct", "switch", "this", "throw", "true", "try", "typeof", "uint", "ulong",
-        "unchecked", "unsafe", "ushort", "using", "virtual", "void", "volatile", "while",
-        // contextual keywords
-        "add", "and", "alias", "ascending", "async", "await", "by", "descending", "dynamic", "equals",
-        "file", "from", "get", "global", "group", "init", "into", "join", "let", "managed", "nameof",
-        "nint", "not", "notnull", "nuint", "on", "or", "orderby", "partial", "record", "remove", "required",
-        "scoped", "select", "set", "unmanaged", "value", "var", "when", "where", "with", "yield"
-    };
-
-    // Names of System.Object members to avoid hiding with generated constants.
-    private static readonly HashSet<string> ObjectMemberNames = new(StringComparer.Ordinal)
-    {
-        "Equals",
-        "GetHashCode",
-        "ToString",
-        "GetType",
-        "Finalize",
-        "MemberwiseClone",
-        "ReferenceEquals"
-    };
-
-
-    private static void EnsureGitAvailable()
-    {
-        try
-        {
-            RunProcess("git", "--version");
-        }
-        catch (Exception ex)
-        {
-            throw new InvalidOperationException("Git is required but was not found on PATH. Please install Git and try again.", ex);
-        }
-    }
-
-    private static void RunProcess(string fileName, string arguments)
-    {
-        using var proc = new Process
-        {
-            StartInfo = new ProcessStartInfo
-            {
-                FileName = fileName,
-                Arguments = arguments,
-                CreateNoWindow = true,
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            }
+            ClassName = className,
+            TargetNamespace = DefaultNamespace,
+            OutputPath = GetDefaultOutputPath(className),
+            Source = source
         };
 
-        proc.Start();
-        var stdout = proc.StandardOutput.ReadToEnd();
-        var stderr = proc.StandardError.ReadToEnd();
-        proc.WaitForExit();
-
-        if (proc.ExitCode != 0)
-        {
-            throw new InvalidOperationException(
-                $"Process `{fileName} {arguments}` failed with code {proc.ExitCode}.{Environment.NewLine}" +
-                $"STDOUT: {stdout}{Environment.NewLine}STDERR: {stderr}");
-        }
-    }
-
-    private static void TryDeleteDirectory(string path)
-    {
-        if (string.IsNullOrWhiteSpace(path) || !Directory.Exists(path)) return;
-        try
-        {
-            // Make files writable and delete
-            foreach (var file in Directory.EnumerateFiles(path, "*", SearchOption.AllDirectories))
-            {
-                try
-                {
-                    var attr = File.GetAttributes(file);
-                    if ((attr & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                        File.SetAttributes(file, attr & ~FileAttributes.ReadOnly);
-                }
-                catch
-                {
-                    // ignore
-                }
-            }
-
-            Directory.Delete(path, recursive: true);
-        }
-        catch
-        {
-            // ignore cleanup errors
-        }
+        var result = service.Generate(options);
+        service.PrintResult(result);
     }
 }
