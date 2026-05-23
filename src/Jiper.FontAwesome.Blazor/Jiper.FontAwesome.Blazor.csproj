@@ -6,6 +6,9 @@
         <RazorLangVersion>8.0</RazorLangVersion>
         <DisableImplicitStaticWebAssets>true</DisableImplicitStaticWebAssets>
 
+        <IsTrimmable>true</IsTrimmable>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageId>Jiper.FontAwesome.Blazor</PackageId>
         <Version>0.1.0</Version>
